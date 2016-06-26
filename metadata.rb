@@ -1,0 +1,15 @@
+name 'mediaserver'
+maintainer 'Tyghe Vallard'
+maintainer_email 'vallardt@gmail.com'
+license 'all_rights'
+description 'Setup home media server'
+version '0.1.0'
+
+#depends 'now'
+#depends 'apt'
+#depends 'postfix'
+#depends 'iptables'
+#depends 'openssh'
+depends 'kodi'
+
+supports 'ubuntu'

@@ -1,0 +1,22 @@
+provisioner:
+  name: chef_zero
+  chef_omnibus_url: http://www.getchef.com/chef/install.sh
+  require_chef_omnibus: 12.11.18
+
+platforms:
+- name: ubuntu
+  driver:
+    name: vagrant
+    box: ubuntu/trusty64
+    gui: true
+  #attributes:
+
+suites:
+  - name: homeserver
+    driver:
+      customize:
+        memory: '4000'
+        cpus: '2'
+    run_list:
+        - recipe[mediaserver]
+    attributes:
