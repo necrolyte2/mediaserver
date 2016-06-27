@@ -8,18 +8,18 @@ user node['mediaserver']['kodiuser']['username'] do
 end
 
 node['mediaserver']['kodiuser']['groups'].each do |agroup|
-	group agroup do
-		append true
-		members node['mediaserver']['kodiuser']['username']
+  group agroup do
+    append true
+    members node['mediaserver']['kodiuser']['username']
   end
 end
 
 cookbook_file '/etc/X11/Xwrapper.config' do
-	source 'Xwrapper.config'
-	owner 'root'
+  source 'Xwrapper.config'
+  owner 'root'
   group 'root'
   mode '0644'
-	notifies :restart, 'service[kodi]'
+  notifies :restart, 'service[kodi]'
 end
 
 template '/etc/init.d/kodi' do
@@ -27,9 +27,9 @@ template '/etc/init.d/kodi' do
   owner 'root'
   group 'root'
   mode '0755'
-	variables(
-		:kodiuser => node['mediaserver']['kodiuser']['username']
-	)
+  variables(
+    kodiuser: node['mediaserver']['kodiuser']['username']
+  )
   notifies :restart, 'service[kodi]'
 end
 
