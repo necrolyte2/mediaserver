@@ -48,8 +48,11 @@ case "$1" in
 
   restart|force-reload)
         echo "Restarting $DESC"
-        start-stop-daemon --stop --pidfile $PID_FILE
-        sleep 5
+				if [ -e $PID_FILE ]
+				then
+						start-stop-daemon --stop --pidfile $PID_FILE
+						sleep 5
+				fi
         start-stop-daemon --start -c $RUN_AS --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
         ;;
   *)

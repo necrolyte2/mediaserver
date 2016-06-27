@@ -20,4 +20,13 @@ describe 'mediaserver::default' do
 		expect(chef_run).to create_group('bar').with(:members => ['foobar'])
 	end
 
+	it 'configures Xwrapper' do
+		expect(chef_run).to create_cookbook_file('/etc/X11/Xwrapper.config')
+	end
+
+	it 'creates kodi service' do
+		expect(chef_run).to enable_service('kodi')
+		expect(chef_run).to render_file('/etc/init.d/kodi')
+	end
+
 end
