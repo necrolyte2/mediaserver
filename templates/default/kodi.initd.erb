@@ -36,51 +36,72 @@ PID_FILE=/var/run/kodi.pid
 
 test -x $DAEMON || exit 0
 
+set -e
+
 status() {
+    if [ ! -e $PID_FILE ]
+    then
+        return 1
+    fi
+    set +e
     ps --pid $(cat $PID_FILE) >/dev/null 2>&1
-    _RET=$?
+    status=$?
+    set -e
+    return $status
+}
+
+start() {
+    if status
+    then
+        log_success_msg "$DESC already running"
+        return 0
+    fi
+    log_success_msg "Starting $DESC"
+    start-stop-daemon --start -c $RUN_AS --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+    if [ $? -eq 0 ]
+    then
+        log_success_msg "Started $DESC"
+        return 0
+    else
+        log_failure_msg "Failed starting $DESC"
+        return 1
+    fi
+}
+
+stop() {
+    if ! status
+    then
+        log_success_msg "$DESC already stopped"
+        return 0
+    fi
+    log_success_msg "Stopping $DESC"
+    start-stop-daemon --stop --pidfile $PID_FILE
+    if [ $? -eq 0 ]
+    then
+        log_success_msg "Stopped $DESC"
+        return 0
+    else
+        log_failure_msg "Failed stopping $DESC"
+        return 1
+    fi
 }
 
 case "$1" in
   start)
-        status
-        if [ $_RET -eq 0 ]
-        then
-            log_success_msg "$DESC already running"
-            exit 0
-        fi
-        log_success_msg "Starting $DESC"
-        start-stop-daemon --start -c $RUN_AS --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
-        if [ $? -eq 0 ]
-        then
-            log_success_msg "Started $DESC"
-        else
-            log_failure_msg "Failed starting $DESC"
-        fi
+        start
         ;;
   stop)
-        log_success_msg "Starting $DESC"
-        start-stop-daemon --stop --pidfile $PID_FILE
-        if [ $? -eq 0 ]
-        then
-            log_success_msg "Stopped $DESC"
-        else
-            log_failure_msg "Failed stopping $DESC"
-        fi
+        stop
         ;;
 
   restart|force-reload)
         echo "Restarting $DESC"
-				if [ -e $PID_FILE ]
-				then
-						start-stop-daemon --stop --pidfile $PID_FILE
-						sleep 5
-				fi
-        start-stop-daemon --start -c $RUN_AS --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        stop
+        sleep 5
+        start
         ;;
   status)
-        status
-        if [ $_RET -eq 0 ]
+        if status
         then
           log_success_msg "$DESC is running"
         else

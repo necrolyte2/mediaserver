@@ -33,5 +33,5 @@ template '/etc/init.d/kodi' do
 end
 
 service 'kodi' do
-  action [:enable, :start]
+  action [:enable]
 end
