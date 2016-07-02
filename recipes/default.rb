@@ -19,7 +19,6 @@ cookbook_file '/etc/X11/Xwrapper.config' do
   owner 'root'
   group 'root'
   mode '0644'
-  notifies :restart, 'service[kodi]'
 end
 
 template '/etc/init.d/kodi' do

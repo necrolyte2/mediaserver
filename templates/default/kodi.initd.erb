@@ -10,6 +10,8 @@
 # Description:       starts instance of Kodi using start-stop-daemon and xinit
 ### END INIT INFO
 
+. /lib/lsb/init-functions
+
 ############### EDIT ME ##################
 
 # path to xinit exec
@@ -34,16 +36,37 @@ PID_FILE=/var/run/kodi.pid
 
 test -x $DAEMON || exit 0
 
-set -e
+status() {
+    ps --pid $(cat $PID_FILE) >/dev/null 2>&1
+    _RET=$?
+}
 
 case "$1" in
   start)
-        echo "Starting $DESC"
+        status
+        if [ $_RET -eq 0 ]
+        then
+            log_success_msg "$DESC already running"
+            exit 0
+        fi
+        log_success_msg "Starting $DESC"
         start-stop-daemon --start -c $RUN_AS --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        if [ $? -eq 0 ]
+        then
+            log_success_msg "Started $DESC"
+        else
+            log_failure_msg "Failed starting $DESC"
+        fi
         ;;
   stop)
-        echo "Stopping $DESC"
+        log_success_msg "Starting $DESC"
         start-stop-daemon --stop --pidfile $PID_FILE
+        if [ $? -eq 0 ]
+        then
+            log_success_msg "Stopped $DESC"
+        else
+            log_failure_msg "Failed stopping $DESC"
+        fi
         ;;
 
   restart|force-reload)
@@ -54,6 +77,15 @@ case "$1" in
 						sleep 5
 				fi
         start-stop-daemon --start -c $RUN_AS --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+        ;;
+  status)
+        status
+        if [ $_RET -eq 0 ]
+        then
+          log_success_msg "$DESC is running"
+        else
+          log_success_msg "$DESC is not running"
+        fi
         ;;
   *)
         N=/etc/init.d/$NAME
