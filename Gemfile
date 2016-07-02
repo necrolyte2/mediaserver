@@ -1,3 +1,5 @@
+source 'https://rubygems.org'
+
 gem 'addressable', '2.3.8'
 gem 'artifactory', '2.3.2'
 gem 'ast', '2.3.0'
