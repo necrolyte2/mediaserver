@@ -6,6 +6,18 @@ describe 'mediaserver::default' do
       node.automatic['lsb']['codename'] = 'Trusty'
       node.set['mediaserver']['kodiuser']['groups'] = %w(foo bar)
       node.set['mediaserver']['kodiuser']['username'] = 'foobar'
+      node.set['mediaserver']['kodiuser']['homedir'] = '/home/foobar'
+      node.set['mediaserver']['sources']['video_sources'] = [
+        {
+          'name' => 'source1',
+          'path' => 'smb://127.0.0.1/foo',
+          'allowsharing' => true
+        },
+        {
+          'name' => 'source2',
+          'path' => 'smb://127.0.0.1/bar'
+        }
+      ]
     end.converge(described_recipe)
   end
   it 'includes kodi' do
@@ -23,5 +35,21 @@ describe 'mediaserver::default' do
   it 'creates kodi service' do
     expect(chef_run).to enable_service('kodi')
     expect(chef_run).to render_file('/etc/init.d/kodi')
+  end
+  it 'creates kodi sources xml' do
+    expect(chef_run).to render_file(
+      '/home/foobar/.kodi/userdata/sources.xml'
+    ).with_content { |content|
+      expect(content).to include('<name>source1</name>')
+      expect(content).to include(
+        '<path pathversion="1">smb://127.0.0.1/foo</path>'
+      )
+      expect(content).to include('<allowsharing>true</allowsharing>')
+      expect(content).to include('<name>source2</name>')
+      expect(content).to include(
+        '<path pathversion="1">smb://127.0.0.1/bar</path>'
+      )
+      expect(content).to include('<allowsharing>false</allowsharing>')
+    }
   end
 end

@@ -1,0 +1,28 @@
+<sources>
+    <programs>
+        <default pathversion="1"></default>
+    </programs>
+    <video>
+        <default pathversion="1"></default>
+        <% @video_sources.each do |source| %>
+        <source>
+            <name><%= source.name %></name>
+            <path pathversion="1"><%= source.path %></path>
+            <%- if source.has_key?('allowsharing') and source.allowsharing %>
+            <allowsharing><%= source.allowsharing %></allowsharing>
+            <% else %>
+            <allowsharing>false</allowsharing>
+            <% end %>
+        </source>
+        <% end %>
+    </video>
+    <music>
+        <default pathversion="1"></default>
+    </music>
+    <pictures>
+        <default pathversion="1"></default>
+    </pictures>
+    <files>
+        <default pathversion="1"></default>
+    </files>
+</sources>

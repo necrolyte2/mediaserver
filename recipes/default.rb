@@ -35,3 +35,14 @@ end
 service 'kodi' do
   action [:enable]
 end
+
+template "#{node['mediaserver']['kodiuser']['homedir']}" \
+  "/.kodi/userdata/sources.xml" do
+  source 'sources.xml.erb'
+  owner node['mediaserver']['kodiuser']['username']
+  group node['mediaserver']['kodiuser']['username']
+  mode '0640'
+  variables(
+    video_sources: node['mediaserver']['sources']['video_sources']
+  )
+end

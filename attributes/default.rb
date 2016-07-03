@@ -10,3 +10,5 @@ default['mediaserver']['kodiuser']['homedir'] = '/home/kodi'
 default['mediaserver']['kodiuser']['groups'] = %w(
   cdrom audio video plugdev users dialout dip input
 )
+
+default['mediaserver']['sources']['video_sources'] = {}
