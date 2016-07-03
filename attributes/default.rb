@@ -12,3 +12,4 @@ default['mediaserver']['kodiuser']['groups'] = %w(
 )
 
 default['mediaserver']['sources']['video_sources'] = {}
+default['mediaserver']['advancedsettings'] = {}

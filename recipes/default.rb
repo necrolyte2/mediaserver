@@ -46,3 +46,14 @@ template "#{node['mediaserver']['kodiuser']['homedir']}" \
     video_sources: node['mediaserver']['sources']['video_sources']
   )
 end
+template "#{node['mediaserver']['kodiuser']['homedir']}" \
+  "/.kodi/userdata/advancedsettings.xml" do
+  source 'advancedsettings.xml.erb'
+  owner node['mediaserver']['kodiuser']['username']
+  group node['mediaserver']['kodiuser']['username']
+  mode '0640'
+  variables(
+    videodatabase: node['mediaserver']['advancedsettings']['videodatabase'],
+    musicdatabase: node['mediaserver']['advancedsettings']['musicdatabase']
+  )
+end

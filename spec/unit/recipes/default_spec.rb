@@ -18,6 +18,20 @@ describe 'mediaserver::default' do
           'path' => 'smb://127.0.0.1/bar'
         }
       ]
+      node.set['mediaserver']['advancedsettings']['videodatabase'] = {
+        'type' => 'foo1',
+        'host' => 'localhost1',
+        'port' => '12341',
+        'user' => 'bar1',
+        'pass' => 'pass1'
+      }
+      node.set['mediaserver']['advancedsettings']['musicdatabase'] = {
+        'type' => 'foo2',
+        'host' => 'localhost2',
+        'port' => '12342',
+        'user' => 'bar2',
+        'pass' => 'pass2'
+      }
     end.converge(described_recipe)
   end
   it 'includes kodi' do
@@ -50,6 +64,22 @@ describe 'mediaserver::default' do
         '<path pathversion="1">smb://127.0.0.1/bar</path>'
       )
       expect(content).to include('<allowsharing>false</allowsharing>')
+    }
+  end
+  it 'creates kodi advancedsettings xml' do
+    expect(chef_run).to render_file(
+      '/home/foobar/.kodi/userdata/advancedsettings.xml'
+    ).with_content { |content|
+      expect(content).to include('<type>foo1</type>')
+      expect(content).to include('<host>localhost1</host>')
+      expect(content).to include('<port>12341</port>')
+      expect(content).to include('<user>bar1</user>')
+      expect(content).to include('<pass>pass1</pass>')
+      expect(content).to include('<type>foo2</type>')
+      expect(content).to include('<host>localhost2</host>')
+      expect(content).to include('<port>12342</port>')
+      expect(content).to include('<user>bar2</user>')
+      expect(content).to include('<pass>pass2</pass>')
     }
   end
 end
