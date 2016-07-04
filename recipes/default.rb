@@ -27,14 +27,21 @@ template '/etc/init.d/kodi' do
   group 'root'
   mode '0755'
   variables(
-    kodiuser: node['mediaserver']['kodiuser']['username']
+    kodiuser: node['mediaserver']['kodiuser']['username'],
+    kodihome: node['mediaserver']['kodiuser']['homedir']
   )
   notifies :restart, 'service[kodi]'
 end
 
 service 'kodi' do
-  action [:enable]
+  action [:enable, :start]
 end
+
+#ruby_block 'wait for kodi' do
+  #block do
+    #true until ::File.exists?("#{node['mediaserver']['kodiuser']['homedir']}/.kodi/useradata")
+  #end
+#end
 
 template "#{node['mediaserver']['kodiuser']['homedir']}" \
   "/.kodi/userdata/sources.xml" do

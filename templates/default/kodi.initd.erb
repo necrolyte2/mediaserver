@@ -38,6 +38,23 @@ test -x $DAEMON || exit 0
 
 set -e
 
+wait_for_userdata_created() {
+    kodi_userdata="<%= @kodihome %>/.kodi/userdata"
+    count=0
+    while [ $count -lt 5 ]
+    do
+      if [ -d $kodi_userdata ]
+      then
+        return 0
+      fi
+      echo "${kodi_userdata} does not exist yet"
+      count=$((count + 1))
+      echo "Count is $count"
+      sleep 1
+    done
+    return 1
+}
+
 status() {
     if [ ! -e $PID_FILE ]
     then
@@ -58,6 +75,7 @@ start() {
     fi
     log_success_msg "Starting $DESC"
     start-stop-daemon --start -c $RUN_AS --background --pidfile $PID_FILE  --make-pidfile --exec $DAEMON -- $DAEMON_OPTS
+    wait_for_userdata_created
     if [ $? -eq 0 ]
     then
         log_success_msg "Started $DESC"
