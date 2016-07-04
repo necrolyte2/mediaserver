@@ -37,12 +37,6 @@ service 'kodi' do
   action [:enable, :start]
 end
 
-#ruby_block 'wait for kodi' do
-  #block do
-    #true until ::File.exists?("#{node['mediaserver']['kodiuser']['homedir']}/.kodi/useradata")
-  #end
-#end
-
 template "#{node['mediaserver']['kodiuser']['homedir']}" \
   "/.kodi/userdata/sources.xml" do
   source 'sources.xml.erb'

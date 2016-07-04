@@ -7,6 +7,6 @@ version '0.2.0'
 issues_url 'https://github.com/necrolyte2/mediaserver/issues'
 source_url 'https://github.com/necrolyte2/mediaserver'
 
-depends 'kodi'
+depends 'kodi', '~> 0.1.4'
 
 supports 'ubuntu'
