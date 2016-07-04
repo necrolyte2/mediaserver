@@ -12,7 +12,7 @@ platforms:
   #attributes:
 
 suites:
-  - name: homeserver
+  - name: mediaserver
     driver:
       customize:
         memory: '4000'
@@ -20,3 +20,19 @@ suites:
     run_list:
         - recipe[mediaserver]
     attributes:
+      mediaserver:
+        sources:
+          video_sources:
+            - name: "Movies"
+              path: "smb://192.168.0.4/Movies"
+              allowsharing: true
+            - name: "Episodes"
+              path: "smb://192.168.0.4/Episodes"
+              allowsharing: true
+        advancedsettings:
+          videodatabase:
+            type: "mysql"
+            host: "192.168.0.4"
+            port: 3306
+            user: "kodi"
+            pass: "kodi"

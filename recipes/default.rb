@@ -45,7 +45,9 @@ template "#{node['mediaserver']['kodiuser']['homedir']}" \
   variables(
     video_sources: node['mediaserver']['sources']['video_sources']
   )
+  notifies :restart, 'service[kodi]'
 end
+
 template "#{node['mediaserver']['kodiuser']['homedir']}" \
   "/.kodi/userdata/advancedsettings.xml" do
   source 'advancedsettings.xml.erb'
@@ -56,4 +58,5 @@ template "#{node['mediaserver']['kodiuser']['homedir']}" \
     videodatabase: node['mediaserver']['advancedsettings']['videodatabase'],
     musicdatabase: node['mediaserver']['advancedsettings']['musicdatabase']
   )
+  notifies :restart, 'service[kodi]'
 end
