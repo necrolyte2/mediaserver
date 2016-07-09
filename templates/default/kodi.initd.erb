@@ -122,8 +122,10 @@ case "$1" in
         if status
         then
           log_success_msg "$DESC is running"
+          exit 0
         else
           log_success_msg "$DESC is not running"
+          exit 1
         fi
         ;;
   *)

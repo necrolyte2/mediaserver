@@ -37,8 +37,14 @@ service 'kodi' do
   action [:enable, :start]
 end
 
+execute 'kodi_creates_userdata' do
+  command 'service kodi restart'
+  not_if ::Dir.exist? \
+    "#{node['mediaserver']['kodiuser']['homedir']}/.kodi/userdata"
+end
+
 template "#{node['mediaserver']['kodiuser']['homedir']}" \
-  "/.kodi/userdata/sources.xml" do
+  '/.kodi/userdata/sources.xml' do
   source 'sources.xml.erb'
   owner node['mediaserver']['kodiuser']['username']
   group node['mediaserver']['kodiuser']['username']
@@ -50,7 +56,7 @@ template "#{node['mediaserver']['kodiuser']['homedir']}" \
 end
 
 template "#{node['mediaserver']['kodiuser']['homedir']}" \
-  "/.kodi/userdata/advancedsettings.xml" do
+  '/.kodi/userdata/advancedsettings.xml' do
   source 'advancedsettings.xml.erb'
   owner node['mediaserver']['kodiuser']['username']
   group node['mediaserver']['kodiuser']['username']

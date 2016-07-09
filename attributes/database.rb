@@ -1,0 +1,8 @@
+default['mediaserver']['database']['instance']['name'] = 'kodi'
+default['mediaserver']['database']['instance']['port'] = '3306'
+default['mediaserver']['database']['instance']['version'] = '5.5'
+default['mediaserver']['database']['instance']['root_username'] = 'root'
+default['mediaserver']['database']['instance']['root_password'] = '123457'
+default['mediaserver']['database']['instance']['host'] = '127.0.0.1'
+default['mediaserver']['database']['instance']['admin_username'] = 'kodi'
+default['mediaserver']['database']['instance']['admin_password'] = 'kodi'
