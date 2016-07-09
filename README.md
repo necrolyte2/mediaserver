@@ -7,6 +7,7 @@ Chef cookbook to setup a home media server based on kodi
 # Running the cookbook
 
 The instructions assume you are running Ubuntu as your OS
+
 Running these instructions will get kodi up and running
 
 1. First install the chef client
