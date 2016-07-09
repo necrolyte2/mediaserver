@@ -4,9 +4,6 @@ describe 'mediaserver::default' do
   let(:chef_run) do
     ChefSpec::SoloRunner.new do |node|
       node.automatic['lsb']['codename'] = 'Trusty'
-      node.set['mediaserver']['kodiuser']['groups'] = %w(foo bar)
-      node.set['mediaserver']['kodiuser']['username'] = 'foobar'
-      node.set['mediaserver']['kodiuser']['homedir'] = '/home/foobar'
       node.set['mediaserver']['sources']['video_sources'] = [
         {
           'name' => 'source1',
@@ -34,25 +31,9 @@ describe 'mediaserver::default' do
       }
     end.converge(described_recipe)
   end
-  it 'includes kodi' do
-    expect(chef_run).to include_recipe('kodi')
-    expect(chef_run).to install_package('kodi')
-  end
-  it 'creates kodi user' do
-    expect(chef_run).to create_user('foobar').with(manage_home: true)
-    expect(chef_run).to create_group('foo').with(members: ['foobar'])
-    expect(chef_run).to create_group('bar').with(members: ['foobar'])
-  end
-  it 'configures Xwrapper' do
-    expect(chef_run).to create_cookbook_file('/etc/X11/Xwrapper.config')
-  end
-  it 'creates kodi service' do
-    expect(chef_run).to enable_service('kodi')
-    expect(chef_run).to render_file('/etc/init.d/kodi')
-  end
   it 'creates kodi sources xml' do
     expect(chef_run).to render_file(
-      '/home/foobar/.kodi/userdata/sources.xml'
+      '/home/kodi/.kodi/userdata/sources.xml'
     ).with_content { |content|
       expect(content).to include('<name>source1</name>')
       expect(content).to include(
@@ -68,7 +49,7 @@ describe 'mediaserver::default' do
   end
   it 'creates kodi advancedsettings xml' do
     expect(chef_run).to render_file(
-      '/home/foobar/.kodi/userdata/advancedsettings.xml'
+      '/home/kodi/.kodi/userdata/advancedsettings.xml'
     ).with_content { |content|
       expect(content).to include('<type>foo1</type>')
       expect(content).to include('<host>localhost1</host>')
@@ -81,5 +62,19 @@ describe 'mediaserver::default' do
       expect(content).to include('<user>bar2</user>')
       expect(content).to include('<pass>pass2</pass>')
     }
+  end
+  it 'not include database' do
+    expect(chef_run).not_to include_recipe('mediaserver::database')
+  end
+  context 'mysql database' do
+    let(:chef_run) do
+      ChefSpec::SoloRunner.new do |node|
+        node.automatic['lsb']['codename'] = 'Trusty'
+        node.set['mediaserver']['database']['type'] = 'mysql'
+      end.converge(described_recipe)
+    end
+    it 'includes database recipe if type is mysql' do
+      expect(chef_run).to include_recipe('mediaserver::database')
+    end
   end
 end
